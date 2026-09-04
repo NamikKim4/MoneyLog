@@ -68,7 +68,7 @@
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/memo_list_title"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/accent"
+        app:backgroundTint="@color/primary"
         app:borderWidth="0dp"
         app:tint="@color/white" />
 

@@ -20,6 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.moneylog.app.common.FunAnimations
+import com.moneylog.app.common.TouchPopEffect
 import com.moneylog.app.data.MemoRepository
 import com.moneylog.app.model.DailyMemo
 import com.moneylog.app.ui.MemoAdapter
@@ -76,8 +78,15 @@ class MemoListActivity : AppCompatActivity() {
         rvMemoList.layoutManager = LinearLayoutManager(this)
         rvMemoList.adapter = adapter
 
-        tvMonthSelector.setOnClickListener { showMonthPicker() }
-        fabAddMemo.setOnClickListener { showDatePickerThenMemo() }
+        tvMonthSelector.setOnClickListener {
+            TouchPopEffect.pop(it)
+            showMonthPicker()
+        }
+        fabAddMemo.setOnClickListener {
+            TouchPopEffect.pop(it)
+            FunAnimations.bounce(fabAddMemo)
+            showDatePickerThenMemo()
+        }
 
         setupMonthSwipeGesture()
     }
@@ -161,6 +170,7 @@ class MemoListActivity : AppCompatActivity() {
     private fun refreshList() {
         lifecycleScope.launch {
             val memos = withContext(Dispatchers.IO) { MemoRepository.getByMonth(selectedYearMonth) }
+            adapter.resetAnimation()
             adapter.submitList(memos)
             tvEmptyMessage.visibility = if (memos.isEmpty()) View.VISIBLE else View.GONE
             rvMemoList.visibility = if (memos.isEmpty()) View.GONE else View.VISIBLE

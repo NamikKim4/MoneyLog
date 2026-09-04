@@ -46,4 +46,9 @@ object MemoRepository {
     suspend fun delete(date: String) {
         dao.deleteByDate(date)
     }
+
+    /** 설정 화면의 "데이터 초기화"에서 쓴다 — 메모를 전부 지운다. */
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
 }

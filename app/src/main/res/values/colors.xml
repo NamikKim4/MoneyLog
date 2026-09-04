@@ -10,6 +10,8 @@
 
     <color name="primary">#FF6F9C</color>
     <color name="primary_dark">#E2537F</color>
+    <!-- 예전에 포인트로 쓰던 보라색. 이제 통일감을 위해 어디서도 쓰지 않지만,
+         혹시 남아있을 참조가 깨지지 않도록 정의만 남겨둔다. -->
     <color name="accent">#7C4DFF</color>
 
     <color name="input_bg">#FFEAF1</color>
@@ -18,4 +20,27 @@
     <color name="text_sub">#9C7B8A</color>
     <color name="danger">#FF4D6D</color>
     <color name="chip_accent_bg">#ECE6FF</color>
+    <!-- 보라색 대신 쓰는 분홍 톤 칩 배경 -->
+    <color name="chip_primary_bg">#FFE3EC</color>
+
+    <!-- 지난달보다 덜 썼을 때 / 예산 안에 있을 때 쓰는 안심 색 -->
+    <color name="safe">#3DB56B</color>
+
+    <!-- 지출 목록 화면의 차분한(flat) UI에서 쓰는 톤 -->
+    <color name="divider">#F5E8EC</color>
+    <color name="budget_track">#FBE9EE</color>
+
+    <!-- 탭 가능한 요소를 눌렀을 때 살짝 번지는 잔물결 색 -->
+    <color name="ripple_primary">#33FF6F9C</color>
+    <color name="ripple_on_primary">#40FFFFFF</color>
+
+    <!-- 카테고리 원형 아이콘 배경 팔레트 (카테고리 이름 기준으로 자동 배정) -->
+    <color name="cat_bg_1">#FFE8D6</color>
+    <color name="cat_bg_2">#DCEEFF</color>
+    <color name="cat_bg_3">#EDE3FF</color>
+    <color name="cat_bg_4">#F5E6D3</color>
+    <color name="cat_bg_5">#E9DFFF</color>
+    <color name="cat_bg_6">#DFF5EA</color>
+    <color name="cat_bg_7">#FFF3D0</color>
+    <color name="cat_bg_8">#FFE1EC</color>
 </resources>

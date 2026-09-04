@@ -14,20 +14,74 @@
         android:paddingRight="24dp"
         android:paddingBottom="28dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvAddExpenseTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/add_expense_title"
+                android:textColor="@color/primary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- 기존 지출을 수정하는 화면일 때만 나타나는 삭제 버튼. -->
+            <TextView
+                android:id="@+id/tvDeleteExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_list_item_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:text="@string/delete_expense_button"
+                android:textColor="@color/danger"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
         <TextView
+            android:id="@+id/tvQuickEntryLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_expense_title"
-            android:textColor="@color/primary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="16dp"
+            android:text="@string/quick_entry_title"
+            android:textColor="@color/text_sub"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
+        <HorizontalScrollView
+            android:id="@+id/quickEntryScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/quickEntryContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
+        <!-- 날짜: 직접 타이핑이 아니라 캘린더 팝업으로 고르는 필드라서, 달력 아이콘으로 그 특성을 알려준다. -->
         <EditText
             android:id="@+id/etDate"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_rounded_input"
+            android:drawableEnd="@drawable/ic_calendar"
+            android:drawablePadding="8dp"
             android:hint="@string/date_hint"
             android:inputType="text"
             android:maxLines="1"
@@ -37,6 +91,8 @@
             android:textColorHint="@color/text_sub"
             android:textSize="16sp" />
 
+        <!-- 카테고리: 프리셋 목록에서 고르거나 직접 입력할 수 있는 필드라서, 아래 화살표로
+             "탭하면 목록이 펼쳐진다"는 것을 날짜/메모 같은 순수 입력창과 구분해서 보여준다. -->
         <AutoCompleteTextView
             android:id="@+id/etCategory"
             android:layout_width="match_parent"
@@ -44,6 +100,8 @@
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_rounded_input"
             android:completionThreshold="0"
+            android:drawableEnd="@drawable/ic_chevron_down"
+            android:drawablePadding="8dp"
             android:dropDownHeight="wrap_content"
             android:dropDownVerticalOffset="4dp"
             android:hint="@string/category_hint"
@@ -98,7 +156,7 @@
                     android:background="@drawable/bg_chip_category"
                     android:text="@string/quick_add_1000"
                     android:textAllCaps="false"
-                    android:textColor="@color/accent"
+                    android:textColor="@color/primary_dark"
                     android:textSize="12sp" />
 
                 <Button
@@ -111,7 +169,7 @@
                     android:background="@drawable/bg_chip_category"
                     android:text="@string/quick_add_10000"
                     android:textAllCaps="false"
-                    android:textColor="@color/accent"
+                    android:textColor="@color/primary_dark"
                     android:textSize="12sp" />
 
                 <Button
@@ -124,7 +182,7 @@
                     android:background="@drawable/bg_chip_category"
                     android:text="@string/quick_add_100000"
                     android:textAllCaps="false"
-                    android:textColor="@color/accent"
+                    android:textColor="@color/primary_dark"
                     android:textSize="12sp" />
 
                 <Button
@@ -317,7 +375,7 @@
                 android:background="@drawable/bg_pill_accent"
                 android:text="@string/done_button"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/primary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 

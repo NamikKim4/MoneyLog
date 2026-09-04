@@ -12,6 +12,9 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.moneylog.app.common.PiggyBankManager
+import kotlinx.coroutines.launch
 
 /**
  * 로그인 없이 앱을 켜면 바로 뜨는 스플래시 화면.
@@ -27,6 +30,12 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        // 지나간 달 중 예산보다 덜 쓴 달이 있으면 그 차액을 돼지 저금통에 적립한다.
+        // 애니메이션과는 상관없는 조용한 백그라운드 작업이라 화면 연출을 막지 않는다.
+        lifecycleScope.launch {
+            PiggyBankManager.processMonthRollover(this@SplashActivity)
+        }
 
         val splashRoot: View = findViewById(R.id.splashRoot)
         val ivGlow: View = findViewById(R.id.ivGlow)

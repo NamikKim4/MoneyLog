@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.moneylog.app.R
 import com.moneylog.app.common.AmountFormat
+import com.moneylog.app.common.TouchPopEffect
 import com.moneylog.app.model.CalendarDay
 
 /**
@@ -36,17 +37,29 @@ object CalendarDayBinder {
         tvDayAmount.text = AmountFormat.compact(day.totalAmount)
         tvMemoDot.visibility = if (day.hasMemo) View.VISIBLE else View.GONE
 
-        if (day.isSelected) {
-            cell.setBackgroundResource(R.drawable.bg_rounded_day_selected)
-            tvDayNumber.setTextColor(ContextCompat.getColor(context, R.color.white))
-            tvDayAmount.setTextColor(ContextCompat.getColor(context, R.color.white))
-        } else {
-            cell.background = null
-            tvDayNumber.setTextColor(ContextCompat.getColor(context, R.color.text_main))
-            tvDayAmount.setTextColor(ContextCompat.getColor(context, R.color.danger))
+        when {
+            day.isSelected -> {
+                cell.setBackgroundResource(R.drawable.bg_rounded_day_selected)
+                tvDayNumber.setTextColor(ContextCompat.getColor(context, R.color.white))
+                tvDayAmount.setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+            day.isToday -> {
+                // 선택되지 않은 "오늘"은 테두리만 살짝 둘러서 은근하게 표시한다.
+                cell.setBackgroundResource(R.drawable.bg_rounded_day_today)
+                tvDayNumber.setTextColor(ContextCompat.getColor(context, R.color.primary))
+                tvDayAmount.setTextColor(ContextCompat.getColor(context, R.color.text_sub))
+            }
+            else -> {
+                cell.background = null
+                tvDayNumber.setTextColor(ContextCompat.getColor(context, R.color.text_main))
+                tvDayAmount.setTextColor(ContextCompat.getColor(context, R.color.text_sub))
+            }
         }
 
         view.isClickable = true
-        view.setOnClickListener { onClick(day) }
+        view.setOnClickListener {
+            TouchPopEffect.pop(it)
+            onClick(day)
+        }
     }
 }

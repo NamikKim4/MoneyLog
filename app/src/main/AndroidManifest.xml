@@ -26,21 +26,52 @@
 
         </activity>
 
+        <!-- adjustResize: 키보드가 올라오면 화면 자체가 줄어들어서, 검색창 아래 목록이나
+             입력 중인 내용이 키보드에 가려지지 않고 스크롤해서 다 볼 수 있게 한다. -->
         <activity
             android:name=".ExpenseListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".AddExpenseActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".CalendarActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".MemoListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".StatisticsActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".PiggyBankActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+
+        <!-- 설정 화면의 "데이터 백업(CSV 내보내기)" 공유하기에 쓰는 FileProvider. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+
+        </provider>
 
     </application>
 

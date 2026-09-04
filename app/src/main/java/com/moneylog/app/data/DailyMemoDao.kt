@@ -15,6 +15,10 @@ interface DailyMemoDao {
     @Query("DELETE FROM daily_memos WHERE date = :date")
     suspend fun deleteByDate(date: String)
 
+    /** 설정 화면의 "데이터 초기화"에서 쓴다 — 메모를 전부 지운다. */
+    @Query("DELETE FROM daily_memos")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM daily_memos WHERE date = :date LIMIT 1")
     suspend fun getByDate(date: String): DailyMemo?
 

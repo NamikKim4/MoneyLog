@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,12 +16,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import com.moneylog.app.common.FunAnimations
+import com.moneylog.app.common.TouchPopEffect
 import com.moneylog.app.data.ExpenseRepository
 import com.moneylog.app.data.MemoRepository
 import com.moneylog.app.model.CalendarDay
 import com.moneylog.app.model.Expense
 import com.moneylog.app.ui.CalendarDayBinder
 import com.moneylog.app.ui.ExpenseAdapter
+import com.moneylog.app.ui.SwipeToDeleteHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,42 +39,62 @@ import kotlin.math.abs
  * 이미 선택된 날짜를 한 번 더 탭하면 그날의 메모를 쓰거나 볼 수 있는 창이 뜬다.
  * 메모가 있는 날짜는 캘린더 칸에 📝 표시가 붙는다.
  * 화면 아무 곳이나 좌우로 스와이프해도 이전/다음 달로 넘어간다.
+ * 그날 지출 삭제는 지출 목록 화면과 똑같이 왼쪽 스와이프 + 실행취소 스낵바로 처리한다.
  */
 class CalendarActivity : AppCompatActivity() {
 
     private lateinit var tvMonthYear: TextView
-    private lateinit var btnPrevMonth: TextView
-    private lateinit var btnNextMonth: TextView
-    private lateinit var btnMemoList: TextView
+    private lateinit var btnPrevMonth: FrameLayout
+    private lateinit var btnNextMonth: FrameLayout
+    private lateinit var btnMemoList: FrameLayout
     private lateinit var calendarGrid: LinearLayout
     private lateinit var tvSelectedDateLabel: TextView
     private lateinit var tvSelectedDayTotal: TextView
     private lateinit var tvSelectedDayEmpty: TextView
     private lateinit var rvSelectedDayExpenses: RecyclerView
     private lateinit var tvMonthTotal: TextView
-    private lateinit var btnAddForDay: TextView
+    private lateinit var btnAddForDay: FrameLayout
 
-    private val dayExpenseAdapter = ExpenseAdapter(emptyList()) { expense -> confirmDeleteExpense(expense) }
+    private val dayExpenseAdapter = ExpenseAdapter(emptyList(), onItemClick = { expense -> openEditExpense(expense) })
     private lateinit var gestureDetector: GestureDetector
 
+    /** 스와이프 삭제/실행취소를 화면에서 바로 반영하기 위해 들고 있는, 선택된 날짜의 지출 목록. */
+    private var currentDayExpenses: List<Expense> = emptyList()
+
+    /** 새 지출 등록/기존 지출 수정 화면(AddExpenseActivity)을 모두 이 launcher 하나로 처리한다. */
     private val addExpenseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
+            if (result.resultCode != RESULT_OK) return@registerForActivityResult
+            val data = result.data ?: return@registerForActivityResult
 
-                val expense = Expense(
-                    date = data.getStringExtra(AddExpenseActivity.EXTRA_DATE).orEmpty(),
-                    category = data.getStringExtra(AddExpenseActivity.EXTRA_CATEGORY).orEmpty(),
-                    amount = data.getLongExtra(AddExpenseActivity.EXTRA_AMOUNT, 0L),
-                    memo = data.getStringExtra(AddExpenseActivity.EXTRA_MEMO).orEmpty()
-                )
+            // 수정 화면에서 "삭제"를 눌러 돌아온 경우: 기존 삭제+실행취소 로직을 그대로 재사용한다.
+            val deleteId = data.getLongExtra(AddExpenseActivity.EXTRA_DELETE_ID, -1L)
+            if (deleteId != -1L) {
+                currentDayExpenses.find { it.id == deleteId }?.let { deleteExpenseWithUndo(it) }
+                return@registerForActivityResult
+            }
 
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) { ExpenseRepository.add(expense) }
-                    loadMonth()
+            val editId = data.getLongExtra(AddExpenseActivity.EXTRA_EDIT_ID, -1L)
+            val expense = Expense(
+                id = if (editId != -1L) editId else System.currentTimeMillis(),
+                date = data.getStringExtra(AddExpenseActivity.EXTRA_DATE).orEmpty(),
+                category = data.getStringExtra(AddExpenseActivity.EXTRA_CATEGORY).orEmpty(),
+                amount = data.getLongExtra(AddExpenseActivity.EXTRA_AMOUNT, 0L),
+                memo = data.getStringExtra(AddExpenseActivity.EXTRA_MEMO).orEmpty()
+            )
+
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    if (editId != -1L) ExpenseRepository.update(expense) else ExpenseRepository.add(expense)
                 }
+                loadMonth()
             }
         }
+
+    /** 지출 항목을 탭했을 때: 그 내용을 채운 수정 화면을 연다. */
+    private fun openEditExpense(expense: Expense) {
+        addExpenseLauncher.launch(AddExpenseActivity.newIntentForEdit(this, expense))
+    }
 
     private var currentMonth: YearMonth = YearMonth.now()
     private var selectedDate: LocalDate = LocalDate.now()
@@ -100,12 +125,32 @@ class CalendarActivity : AppCompatActivity() {
         rvSelectedDayExpenses.layoutManager = LinearLayoutManager(this)
         rvSelectedDayExpenses.adapter = dayExpenseAdapter
 
-        btnPrevMonth.setOnClickListener { goToPreviousMonth() }
-        btnNextMonth.setOnClickListener { goToNextMonth() }
+        SwipeToDeleteHelper(
+            density = resources.displayMetrics.density,
+            canSwipe = { true },
+            onSwiped = { position, itemView ->
+                dayExpenseAdapter.getItemAt(position)?.let {
+                    TouchPopEffect.pop(itemView)
+                    deleteExpenseWithUndo(it)
+                }
+            }
+        ).attachTo(rvSelectedDayExpenses)
+
+        btnPrevMonth.setOnClickListener {
+            TouchPopEffect.pop(it)
+            goToPreviousMonth()
+        }
+        btnNextMonth.setOnClickListener {
+            TouchPopEffect.pop(it)
+            goToNextMonth()
+        }
         btnAddForDay.setOnClickListener {
+            TouchPopEffect.pop(it)
+            FunAnimations.bounce(btnAddForDay)
             addExpenseLauncher.launch(AddExpenseActivity.newIntent(this, selectedDate.toString()))
         }
         btnMemoList.setOnClickListener {
+            TouchPopEffect.pop(it)
             startActivity(MemoListActivity.newIntent(this, currentYearMonthString()))
         }
 
@@ -193,7 +238,8 @@ class CalendarActivity : AppCompatActivity() {
             val monthTotal = withContext(Dispatchers.IO) {
                 ExpenseRepository.totalAmountForMonth(yearMonthStr)
             }
-            tvMonthTotal.text = getString(R.string.month_total_format, monthTotal)
+            tvMonthTotal.text = getString(R.string.total_amount_format, monthTotal)
+            if (monthTotal > 0) FunAnimations.jingle(tvMonthTotal)
 
             renderCalendarGrid()
             loadSelectedDayExpenses()
@@ -207,6 +253,7 @@ class CalendarActivity : AppCompatActivity() {
             currentMonth.monthValue
         )
 
+        val today = LocalDate.now()
         val firstDayOfMonth = currentMonth.atDay(1)
         // 일요일=0, 월요일=1 ... 토요일=6 이 되도록 보정
         val leadingBlanks = firstDayOfMonth.dayOfWeek.value % 7
@@ -221,7 +268,8 @@ class CalendarActivity : AppCompatActivity() {
                     date = date,
                     totalAmount = dailyTotals[date] ?: 0L,
                     isSelected = date == selectedDate,
-                    hasMemo = memoDates.contains(date.toString())
+                    hasMemo = memoDates.contains(date.toString()),
+                    isToday = date == today
                 )
             )
         }
@@ -251,6 +299,10 @@ class CalendarActivity : AppCompatActivity() {
             CalendarDayBinder.bind(cellView, day) { clickedDay -> onDaySelected(clickedDay) }
             rowLayout?.addView(cellView)
         }
+
+        // 달을 넘길 때마다 격자가 살짝 페이드로 다시 나타나게 해서 화면이 뚝뚝 바뀌지 않게 한다.
+        calendarGrid.alpha = 0f
+        calendarGrid.animate().alpha(1f).setDuration(220L).start()
     }
 
     /** 다른 날짜를 탭하면 그 날짜를 선택하고, 이미 선택되어 있던 날짜를 한 번 더 탭하면 메모 창을 연다. */
@@ -274,23 +326,41 @@ class CalendarActivity : AppCompatActivity() {
             selectedDate.dayOfMonth
         )
 
-        val dayTotal = dailyTotals[selectedDate] ?: 0L
-        if (dayTotal > 0) {
-            tvSelectedDayTotal.visibility = View.VISIBLE
-            tvSelectedDayTotal.text = getString(R.string.selected_day_total_format, dayTotal)
-        } else {
-            tvSelectedDayTotal.visibility = View.GONE
-        }
+        updateSelectedDayTotalLabel()
 
         lifecycleScope.launch {
             val expenses = withContext(Dispatchers.IO) {
                 ExpenseRepository.getByDate(selectedDate.toString())
             }
 
-            dayExpenseAdapter.submitList(expenses)
-            tvSelectedDayEmpty.visibility = if (expenses.isEmpty()) View.VISIBLE else View.GONE
-            rvSelectedDayExpenses.visibility = if (expenses.isEmpty()) View.GONE else View.VISIBLE
+            currentDayExpenses = expenses
+            dayExpenseAdapter.resetAnimation()
+            renderDayExpenseList()
+
+            // 선택한 날짜의 상세 영역도 살짝 페이드로 갱신되게 한다.
+            val detailGroup = listOf(tvSelectedDateLabel, tvSelectedDayEmpty, rvSelectedDayExpenses)
+            detailGroup.forEach { it.alpha = 0f }
+            detailGroup.forEach { view ->
+                view.animate().alpha(1f).setDuration(200L).start()
+            }
         }
+    }
+
+    private fun updateSelectedDayTotalLabel() {
+        val dayTotal = dailyTotals[selectedDate] ?: 0L
+        if (dayTotal > 0) {
+            tvSelectedDayTotal.visibility = View.VISIBLE
+            tvSelectedDayTotal.text = getString(R.string.amount_won_format, dayTotal)
+            FunAnimations.jingle(tvSelectedDayTotal)
+        } else {
+            tvSelectedDayTotal.visibility = View.GONE
+        }
+    }
+
+    private fun renderDayExpenseList() {
+        dayExpenseAdapter.submitList(currentDayExpenses)
+        tvSelectedDayEmpty.visibility = if (currentDayExpenses.isEmpty()) View.VISIBLE else View.GONE
+        rvSelectedDayExpenses.visibility = if (currentDayExpenses.isEmpty()) View.GONE else View.VISIBLE
     }
 
     /** 그 날짜의 메모를 쓰거나 수정하는 다이얼로그. 저장하면 캘린더의 📝 표시도 즉시 갱신된다. */
@@ -319,17 +389,37 @@ class CalendarActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun confirmDeleteExpense(expense: Expense) {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.delete_confirm_title)
-            .setMessage(R.string.delete_confirm_message)
-            .setPositiveButton(R.string.delete_button) { _, _ ->
+    /**
+     * 왼쪽으로 스와이프해서 지운 지출을 즉시 화면에서 지우고(서버 삭제는 백그라운드),
+     * 실행취소 스낵바를 보여준다. 달력 격자/월 총 지출도 다시 조회 없이 그 자리에서 갱신한다.
+     */
+    private fun deleteExpenseWithUndo(expense: Expense) {
+        currentDayExpenses = currentDayExpenses.filterNot { it.id == expense.id }
+        renderDayExpenseList()
+        updateSelectedDayTotalLabel()
+
+        dailyTotals = dailyTotals.toMutableMap().apply {
+            val updated = (this[selectedDate] ?: 0L) - expense.amount
+            if (updated > 0) this[selectedDate] = updated else remove(selectedDate)
+        }
+
+        val previousMonthTotalText = tvMonthTotal.text
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { ExpenseRepository.delete(expense) }
+            val monthTotal = withContext(Dispatchers.IO) {
+                ExpenseRepository.totalAmountForMonth(currentYearMonthString())
+            }
+            tvMonthTotal.text = getString(R.string.total_amount_format, monthTotal)
+        }
+
+        Snackbar.make(rvSelectedDayExpenses, getString(R.string.expense_deleted_message), Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo_button) {
+                tvMonthTotal.text = previousMonthTotalText
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO) { ExpenseRepository.delete(expense) }
+                    withContext(Dispatchers.IO) { ExpenseRepository.add(expense) }
                     loadMonth()
                 }
             }
-            .setNegativeButton(R.string.cancel_button, null)
             .show()
     }
 }

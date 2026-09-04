@@ -15,7 +15,7 @@
 
     <string name="expense_list_title">🐷 지출 목록</string>
     <string name="open_calendar_button">📅 캘린더 보기</string>
-    <string name="total_amount_format">총 지출 %,d원</string>
+    <string name="total_amount_format">%,d원</string>
     <string name="month_selector_format">%1$d년 %2$d월 ▾</string>
     <string name="amount_won_format">%,d원</string>
     <string name="expense_list_empty_message">아직 등록된 지출 내역이 없어요.\n오른쪽 아래 + 버튼으로 추가해보세요. 🐷</string>
@@ -64,6 +64,7 @@
     <string name="selected_day_empty_message">이 날은 등록된 지출이 없어요.</string>
     <string name="selected_day_total_format">총 %,d원</string>
     <string name="month_total_format">총 지출 %,d원</string>
+    <string name="calendar_month_total_label">이번 달 총 지출</string>
     <string name="delete_confirm_title">삭제할까요?</string>
     <string name="delete_confirm_message">이 지출 내역을 삭제합니다.</string>
     <string name="delete_button">삭제</string>
@@ -82,4 +83,93 @@
     <string name="memo_list_title">📝 메모 목록</string>
     <string name="memo_list_empty_message">이 달엔 아직 적어둔 메모가 없어요.</string>
     <string name="memo_delete_confirm_message">이 메모를 삭제합니다.</string>
+
+    <!-- 지난달 대비 비교 -->
+    <string name="month_compare_more_format">지난달보다 %,d원 더 썼어요 ↑</string>
+    <string name="month_compare_less_format">지난달보다 %,d원 덜 썼어요 ↓</string>
+    <string name="month_compare_same">지난달과 지출이 같아요</string>
+
+    <!-- 예산 잔여액 -->
+    <string name="budget_label">이번 달 예산</string>
+    <string name="budget_progress_format">%1$,d / %2$,d원</string>
+    <string name="budget_remaining_format">%,d원 남았어요</string>
+    <string name="budget_over_format">%,d원 초과했어요</string>
+    <string name="budget_edit_title">이번 달 예산 설정</string>
+    <string name="budget_save_button">저장</string>
+
+    <!-- 카테고리 순위 -->
+    <string name="category_stats_title">카테고리 TOP 3</string>
+    <string name="category_stats_empty">이번 달 지출이 없어요.</string>
+    <string name="category_stat_amount_format">%1$,d원 · %2$d%%</string>
+
+    <!-- 검색 -->
+    <string name="search_hint">카테고리, 메모로 검색</string>
+    <string name="search_empty_message">검색 결과가 없어요.</string>
+
+    <!-- 자주 쓰는 항목 (지출 등록 화면 빠른 입력) -->
+    <string name="quick_entry_title">⚡ 자주 쓰는 항목 (탭하면 바로 채워져요)</string>
+    <string name="quick_entry_chip_format">%1$s %2$,d원</string>
+
+    <!-- 지출 목록 화면 재정비 -->
+    <string name="expense_hero_label">🐷 이번 달 지출</string>
+    <string name="month_header_format">%1$d월</string>
+    <string name="month_full_format">%1$d년 %2$d월</string>
+    <string name="today_label">오늘</string>
+    <string name="date_header_format">%1$d월 %2$d일 · %3$s</string>
+    <string name="expense_deleted_message">지출을 삭제했어요</string>
+    <string name="undo_button">실행 취소</string>
+
+    <!-- 지출 상세/수정 -->
+    <string name="edit_expense_title">✏️ 지출 수정</string>
+    <string name="update_button">✏️ 수정 완료</string>
+    <string name="delete_expense_button">삭제</string>
+
+    <!-- 카테고리 순위 탭해서 필터링 -->
+    <string name="category_filter_active_message">‘%1$s’ 카테고리만 보고 있어요. 다시 탭하면 해제돼요.</string>
+
+    <!-- 통계 화면 -->
+    <string name="statistics_title">📊 지출 통계</string>
+    <string name="statistics_button">📊 통계 보기</string>
+    <string name="monthly_trend_title">🐷 최근 6개월 추이</string>
+    <string name="category_breakdown_title">🍰 카테고리별 비중</string>
+    <string name="category_donut_center_label">이번 달 지출</string>
+    <string name="statistics_empty_message">이 달엔 표시할 지출 내역이 없어요.</string>
+
+    <!-- 돼지 저금통 화면 -->
+    <string name="piggy_bank_button">🐷 저금통 보기</string>
+    <string name="piggy_bank_title">🐷 돼지 저금통</string>
+    <string name="piggy_bank_subtitle">예산보다 덜 쓴 달의 차액이 자동으로 쌓여요</string>
+    <string name="piggy_goal_label">목표 금액</string>
+    <string name="piggy_goal_edit_title">저금통 목표 금액 설정</string>
+    <string name="piggy_goal_progress_format">%1$,d원 / %2$,d원 · %3$d%%</string>
+    <string name="piggy_this_month_title">이번 달 예상 절약액</string>
+    <string name="piggy_preview_positive_format">지금처럼만 쓰면 이번 달에 %,d원 절약돼요! 이 달이 끝나면 저금통에 쏙 들어가요 🐷</string>
+    <string name="piggy_preview_over_message">이번 달은 예산을 넘었어요. 다음 달에 다시 도전해봐요!</string>
+    <string name="piggy_new_saving_message">지난 달, 예산보다 덜 써서 %,d원이 저금통에 쏙 들어왔어요! 🐷🪙</string>
+    <string name="piggy_reset_button">저금통 초기화</string>
+    <string name="piggy_reset_confirm_title">저금통을 비울까요?</string>
+    <string name="piggy_reset_confirm_message">지금까지 모은 금액이 모두 사라져요. 이 작업은 되돌릴 수 없어요.</string>
+    <string name="piggy_test_add_button">🧪 테스트로 10만원 채워보기</string>
+    <string name="piggy_test_add_message">테스트로 10만원을 저금통에 넣었어요.</string>
+    <string name="piggy_goal_reached_title">🎉 부자 되세요! 🎉</string>
+    <string name="piggy_goal_reached_subtitle">목표 금액을 가득 채웠어요!</string>
+
+    <!-- 설정 화면 -->
+    <string name="settings_button">⚙️ 설정</string>
+    <string name="settings_title">⚙️ 설정</string>
+    <string name="settings_section_budget">예산</string>
+    <string name="settings_budget_edit_row">이번 달 예산 수정</string>
+    <string name="settings_section_notification">알림</string>
+    <string name="settings_notification_toggle_label">예산 초과 알림 받기</string>
+    <string name="settings_section_data">데이터</string>
+    <string name="settings_backup_row">데이터 백업 (내보내기)</string>
+    <string name="settings_backup_desc">지출 내역을 CSV 파일로 내보내서 보관하거나 다른 곳으로 옮길 수 있어요.</string>
+    <string name="settings_backup_no_data_message">내보낼 지출 내역이 없어요.</string>
+    <string name="settings_backup_error_message">백업 파일을 만드는 중 문제가 발생했어요.</string>
+    <string name="settings_reset_row">데이터 초기화</string>
+    <string name="settings_reset_desc">등록된 모든 지출과 메모를 삭제해요. 되돌릴 수 없어요.</string>
+    <string name="settings_reset_confirm_title">정말 초기화할까요?</string>
+    <string name="settings_reset_confirm_message">등록된 모든 지출 내역과 메모가 삭제돼요. 이 작업은 되돌릴 수 없어요.</string>
+    <string name="settings_reset_done_message">모든 데이터를 초기화했어요.</string>
+    <string name="settings_section_about">정보</string>
 </resources>

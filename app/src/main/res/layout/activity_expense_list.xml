@@ -5,101 +5,381 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <TextView
-        android:id="@+id/tvScreenTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/expense_list_title"
-        android:textColor="@color/primary"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/btnOpenCalendar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/btnOpenCalendar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_pill_accent"
-        android:elevation="2dp"
-        android:paddingLeft="14dp"
-        android:paddingTop="8dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="8dp"
-        android:text="@string/open_calendar_button"
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvMonthSelector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/bg_rounded_input"
-        android:elevation="2dp"
-        android:paddingLeft="14dp"
-        android:paddingTop="8dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="8dp"
-        android:textColor="@color/text_main"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvScreenTitle" />
-
-    <TextView
-        android:id="@+id/tvTotalAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_pill_accent"
-        android:elevation="2dp"
-        android:paddingLeft="14dp"
-        android:paddingTop="7dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="7dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvMonthSelector" />
-
-    <TextView
-        android:id="@+id/tvEmptyMessage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:gravity="center"
-        android:textColor="@color/text_sub"
-        android:textSize="15sp"
-        android:text="@string/expense_list_empty_message"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvExpenses"
+    <!-- 화면 전체를 하나의 스크롤 영역으로 묶어서, 키보드가 올라와도(=화면이 눌려도)
+         검색창과 그 아래 결과까지 손가락으로 끌어올려 볼 수 있게 한다.
+         (adjustResize 로 화면 자체가 줄어들고, 그 안에서는 이 스크롤뷰가 부족한 공간을 대신한다) -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollRoot"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="88dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTotalAmount" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 히어로 영역: 옅은 그라데이션 뒤판 위에 월 선택 + 이번 달 총 지출 큰 숫자.
+                 배경이 내용 크기에 맞춰 자연스럽게 따라오도록 고정 높이 대신 패딩으로 여백을 준다. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_hero_backdrop"
+                android:orientation="vertical"
+                android:paddingBottom="22dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- 조용한 상단 바: 월 선택(텍스트+화살표) -->
+                    <LinearLayout
+                        android:id="@+id/monthSelectorContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp">
+
+                        <TextView
+                            android:id="@+id/tvMonthSelector"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_main"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginStart="4dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_down" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <!-- 통계 화면 아이콘 버튼 -->
+                    <FrameLayout
+                        android:id="@+id/btnOpenStatistics"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:contentDescription="@string/statistics_button"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_bar_chart" />
+
+                    </FrameLayout>
+
+                    <!-- 돼지 저금통 화면 아이콘 버튼 -->
+                    <FrameLayout
+                        android:id="@+id/btnOpenPiggyBank"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:contentDescription="@string/piggy_bank_button"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="🐷"
+                            android:textSize="15sp" />
+
+                    </FrameLayout>
+
+                    <!-- 설정 화면 아이콘 버튼 -->
+                    <FrameLayout
+                        android:id="@+id/btnOpenSettings"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:contentDescription="@string/settings_button"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_settings" />
+
+                    </FrameLayout>
+
+                    <!-- 캘린더 아이콘 버튼 -->
+                    <FrameLayout
+                        android:id="@+id/btnOpenCalendar"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:contentDescription="@string/open_calendar_button"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_calendar" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <!-- 큰 숫자 하나로 보여주는 이번 달 지출(히어로 넘버). 라벨은 작은 뱃지 모양으로 얹어서
+                     그냥 나열된 텍스트보다 좀 더 "디자인된" 느낌이 나게 한다. -->
+                <TextView
+                    android:id="@+id/tvHeroLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_chip_category"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/expense_hero_label"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvHeroAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/text_main"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMonthCompare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- 예산 카드: "탭해서 바꿀 수 있는" 편집 영역이라 카테고리 순위와는
+                 아예 다른 카드로 분리해서, 한눈에 "이건 별개의 정보구나" 하고 구분되게 한다. -->
+            <LinearLayout
+                android:id="@+id/budgetCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_card_soft"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- 예산은 탭해서 바꿀 수 있는 "편집 가능한 항목"이라, 입력창과 같은 옅은 분홍 채움 +
+                     연필 아이콘으로 확실히 표시한다. -->
+                <LinearLayout
+                    android:id="@+id/budgetSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_editable_field"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/budget_label"
+                            android:textColor="@color/text_sub"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBudgetValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_main"
+                            android:textSize="12.5sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginStart="5dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_edit_pencil" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/pbBudget"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="8dp"
+                        android:max="100"
+                        android:progress="0"
+                        android:progressTint="@color/primary"
+                        android:progressBackgroundTint="@color/budget_track" />
+
+                    <TextView
+                        android:id="@+id/tvBudgetRemaining"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 카테고리 TOP 3 카드: 예산 카드와는 별개의 카드로 분리해서 영역을 명확히 나눈다. -->
+            <LinearLayout
+                android:id="@+id/categoryCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_card_soft"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/category_stats_title"
+                    android:textColor="@color/text_sub"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/categoryStatsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <!-- 완전히 둥근 알약 모양 검색창, 살짝 떠 있는 카드 느낌으로 -->
+            <LinearLayout
+                android:id="@+id/searchContainer"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_pill_card_soft"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_search" />
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/text_main"
+                    android:textColorHint="@color/text_sub"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvEmptyMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:text="@string/expense_list_empty_message"
+                android:textColor="@color/text_sub"
+                android:textSize="15sp" />
+
+            <!-- 지출 목록: 더 이상 화면 전체를 대신 스크롤하지 않고, 위 스크롤뷰의 일부로
+                 함께 흘러가면서 그려진다(=키보드가 떠도 이 목록까지 끌어올려서 볼 수 있다). -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+
+            <!-- 목록 맨 아래가 플로팅 버튼(+)에 가려지지 않도록 남겨두는 여백 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="96dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddExpense"
@@ -109,7 +389,7 @@
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/add_expense_title"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/accent"
+        app:backgroundTint="@color/primary"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
