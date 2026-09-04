@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 지출 항목처럼 "탭하면 뭔가 열리는" 목록 줄에 쓰는 투명 리플.
+     원래 배경(줄무늬 없음)은 그대로 두고 눌렀을 때만 살짝 분홍빛이 번지게 한다. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_primary">
+    <item android:drawable="@android:color/transparent" />
+</ripple>

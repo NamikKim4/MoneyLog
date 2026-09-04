@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 톱니바퀴(설정) 아이콘. 캘린더/통계 아이콘과 같은 선 색/두께로 통일감을 맞췄다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,12m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="1.6"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M12,12m-2.4,0a2.4,2.4 0 1,0 4.8,0a2.4,2.4 0 1,0 -4.8,0"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="1.6"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M19.4,12 L21.6,12 M15.7,18.41 L16.8,20.31 M8.3,18.41 L7.2,20.31 M4.6,12 L2.4,12 M8.3,5.59 L7.2,3.69 M15.7,5.59 L16.8,3.69"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+</vector>

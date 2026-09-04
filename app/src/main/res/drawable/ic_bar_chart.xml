@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 통계 화면으로 가는 아이콘. 캘린더 아이콘과 같은 선 스타일(같은 색/굵기)로 그려서
+     상단 바에서 서로 다른 종류의 버튼처럼 보이지 않게 통일감을 준다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M5,20 V13"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M12,20 V8"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M19,20 V4"
+        android:strokeColor="#B4788F"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round" />
+</vector>

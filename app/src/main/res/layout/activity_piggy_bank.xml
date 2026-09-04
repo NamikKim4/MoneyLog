@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/piggyRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="24dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="28dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/piggy_bank_title"
+            android:textColor="@color/primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/piggy_bank_subtitle"
+            android:textColor="@color/text_sub"
+            android:textSize="12.5sp" />
+
+        <!-- 카드 1: 저금통이 차오르는 모습 + 총 모은 금액 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card_soft"
+            android:elevation="3dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <!-- 앱을 처음 켤 때와 같은 등장 연출(은은한 글로우 + 통통 튀는 팝업 + 동전 떨어지는
+                 효과)을 저금통 화면에 들어올 때도 그대로 재현한다. -->
+            <FrameLayout
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <ImageView
+                    android:id="@+id/ivPiggyGlow"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/bg_splash_glow" />
+
+                <com.moneylog.app.ui.PiggyFillView
+                    android:id="@+id/piggyFillView"
+                    android:layout_width="190dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center" />
+
+                <View
+                    android:id="@+id/piggyCoin1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_circle_coin" />
+
+                <View
+                    android:id="@+id/piggyCoin2"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_circle_coin" />
+
+                <View
+                    android:id="@+id/piggyCoin3"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="41dp"
+                    android:layout_marginStart="9dp"
+                    android:background="@drawable/bg_circle_coin" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvPiggyTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_main"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/pbPiggyGoal"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_marginTop="12dp"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/primary"
+                android:progressBackgroundTint="@color/budget_track" />
+
+            <TextView
+                android:id="@+id/tvPiggyGoalProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:textColor="@color/text_sub"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- 목표 금액: 탭해서 바꿀 수 있는 편집 가능한 항목 -->
+        <LinearLayout
+            android:id="@+id/goalSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_editable_field"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/piggy_goal_label"
+                android:textColor="@color/text_sub"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/tvGoalValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="5dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_edit_pencil" />
+
+        </LinearLayout>
+
+        <!-- 카드 2: 이번 달 예상 절약액(진행 중이라 아직 확정은 아님) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card_soft"
+            android:elevation="3dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/piggy_this_month_title"
+                android:textColor="@color/text_sub"
+                android:textSize="12.5sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvThisMonthPreview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- 돼지가 통통해지는 모습을 미리 보고 싶을 때 눌러보는 테스트용 버튼.
+             다 확인했으면 "이제 지워줘"라고 말만 하면 바로 없애드릴 수 있다. -->
+        <TextView
+            android:id="@+id/tvTestAddSaving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_list_item_ripple"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:text="@string/piggy_test_add_button"
+            android:textColor="@color/primary"
+            android:textSize="12.5sp" />
+
+        <TextView
+            android:id="@+id/tvResetPiggy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_list_item_ripple"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:text="@string/piggy_reset_button"
+            android:textColor="@color/danger"
+            android:textSize="12.5sp" />
+
+    </LinearLayout>
+
+</ScrollView>
