@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 귀여운 핑크 돼지 저금통 테마 -->
+    <color name="bg">#FFF3F6</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="border">#F6C6D9</color>
+
+    <color name="primary">#FF6F9C</color>
+    <color name="primary_dark">#E2537F</color>
+    <color name="accent">#7C4DFF</color>
+
+    <color name="input_bg">#FFEAF1</color>
+
+    <color name="text_main">#3A2A33</color>
+    <color name="text_sub">#9C7B8A</color>
+    <color name="danger">#FF4D6D</color>
+    <color name="chip_accent_bg">#ECE6FF</color>
+</resources>

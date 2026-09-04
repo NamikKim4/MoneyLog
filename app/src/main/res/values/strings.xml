@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">MoneyLog</string>
+    <string name="app_tagline">핑크 돼지와 함께하는 귀여운 가계부</string>
+
+    <string name="version_text">Version %1$s</string>
+
+    <string name="login_title">로그인</string>
+    <string name="user_id_hint">아이디</string>
+    <string name="password_hint">비밀번호</string>
+    <string name="login_button">로그인</string>
+
+    <string name="input_id_message">아이디를 입력하세요.</string>
+    <string name="input_pw_message">비밀번호를 입력하세요.</string>
+    <string name="login_fail_message">아이디 또는 비밀번호가 일치하지 않습니다.</string>
+
+    <string name="expense_list_title">🐷 지출 목록</string>
+    <string name="open_calendar_button">📅 캘린더 보기</string>
+    <string name="total_amount_format">총 지출 %,d원</string>
+    <string name="month_selector_format">%1$d년 %2$d월 ▾</string>
+    <string name="amount_won_format">%,d원</string>
+    <string name="expense_list_empty_message">아직 등록된 지출 내역이 없어요.\n오른쪽 아래 + 버튼으로 추가해보세요. 🐷</string>
+
+    <string name="add_expense_title">🐷 지출 등록</string>
+    <string name="date_hint">날짜 선택</string>
+    <string name="category_hint">카테고리 선택 또는 직접 입력 ✏️</string>
+    <string name="amount_hint">금액 (원)</string>
+    <string name="memo_hint">메모 (선택)</string>
+    <string name="save_button">💰 저장</string>
+
+    <string name="input_date_message">날짜를 YYYY-MM-DD 형식으로 입력하세요.</string>
+    <string name="input_category_message">카테고리를 입력하세요.</string>
+    <string name="input_amount_message">금액을 올바르게 입력하세요.</string>
+
+    <string-array name="category_presets">
+        <item>🍚 식비</item>
+        <item>🚌 교통비</item>
+        <item>🛍️ 쇼핑</item>
+        <item>☕ 카페/간식</item>
+        <item>🎬 문화생활</item>
+        <item>💊 의료/건강</item>
+        <item>🏠 주거/통신</item>
+        <item>📚 교육</item>
+        <item>🎁 경조사/선물</item>
+        <item>✈️ 여행</item>
+        <item>💰 기타</item>
+    </string-array>
+
+    <string name="quick_add_1000">+1,000</string>
+    <string name="quick_add_10000">+10,000</string>
+    <string name="quick_add_100000">+100,000</string>
+    <string name="clear_button">초기화</string>
+    <string name="done_button">완료 🐷</string>
+
+    <string name="notification_channel_name">예산 알림</string>
+    <string name="notification_channel_description">이번 달 지출이 예산을 초과하면 알려드려요.</string>
+    <string name="notification_budget_title">예산 초과 알림</string>
+    <string name="notification_budget_message">이번 달 지출이 %2$,d원 예산을 넘었어요. 현재 %1$,d원</string>
+
+    <string name="calendar_title">🐷 지출 캘린더</string>
+    <string name="calendar_month_format">%1$d년 %2$d월</string>
+    <string name="calendar_prev_month">이전 달</string>
+    <string name="calendar_next_month">다음 달</string>
+    <string name="selected_day_format">%1$d월 %2$d일 지출 내역</string>
+    <string name="selected_day_empty_message">이 날은 등록된 지출이 없어요.</string>
+    <string name="selected_day_total_format">총 %,d원</string>
+    <string name="month_total_format">총 지출 %,d원</string>
+    <string name="delete_confirm_title">삭제할까요?</string>
+    <string name="delete_confirm_message">이 지출 내역을 삭제합니다.</string>
+    <string name="delete_button">삭제</string>
+    <string name="cancel_button">취소</string>
+    <string name="weekday_sun">일</string>
+    <string name="weekday_mon">월</string>
+    <string name="weekday_tue">화</string>
+    <string name="weekday_wed">수</string>
+    <string name="weekday_thu">목</string>
+    <string name="weekday_fri">금</string>
+    <string name="weekday_sat">토</string>
+
+    <string name="memo_list_button">📝 메모 목록</string>
+    <string name="memo_dialog_hint">오늘 있었던 일이나 메모를 적어보세요</string>
+    <string name="memo_dialog_title_format">%1$d월 %2$d일 메모</string>
+    <string name="memo_list_title">📝 메모 목록</string>
+    <string name="memo_list_empty_message">이 달엔 아직 적어둔 메모가 없어요.</string>
+    <string name="memo_delete_confirm_message">이 메모를 삭제합니다.</string>
+</resources>

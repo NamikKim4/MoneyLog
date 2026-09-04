@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 다리 4개 (몸통보다 먼저 그려서 몸통에 살짝 가려지게) -->
+    <path android:fillColor="#FF6F9C" android:pathData="M40.40,71.85 A4.25,5.95 0 1,0 40.40,83.75 A4.25,5.95 0 1,0 40.40,71.85 Z" />
+    <path android:fillColor="#FF6F9C" android:pathData="M52.30,71.85 A4.25,5.95 0 1,0 52.30,83.75 A4.25,5.95 0 1,0 52.30,71.85 Z" />
+    <path android:fillColor="#FF6F9C" android:pathData="M64.20,71.85 A4.25,5.95 0 1,0 64.20,83.75 A4.25,5.95 0 1,0 64.20,71.85 Z" />
+    <path android:fillColor="#FF6F9C" android:pathData="M76.10,71.85 A4.25,5.95 0 1,0 76.10,83.75 A4.25,5.95 0 1,0 76.10,71.85 Z" />
+
+    <!-- 몸통 -->
+    <path android:fillColor="#FF6F9C" android:pathData="M57.40,33.60 A27.20,20.40 0 1,0 57.40,74.40 A27.20,20.40 0 1,0 57.40,33.60 Z" />
+
+    <!-- 귀 (작고 동그랗게) -->
+    <path android:fillColor="#E85C8C" android:pathData="M37.00,29.35 A5.95,5.95 0 1,0 37.00,41.25 A5.95,5.95 0 1,0 37.00,29.35 Z" />
+
+    <!-- 코(주둥이) -->
+    <path android:fillColor="#FF6F9C" android:pathData="M28.50,48.05 A9.35,9.35 0 1,0 28.50,66.75 A9.35,9.35 0 1,0 28.50,48.05 Z" />
+
+    <!-- 콧구멍 -->
+    <path android:fillColor="#B84B72" android:pathData="M23.40,54.17 A1.53,1.53 0 1,0 23.40,57.23 A1.53,1.53 0 1,0 23.40,54.17 Z" />
+    <path android:fillColor="#B84B72" android:pathData="M23.40,59.27 A1.53,1.53 0 1,0 23.40,62.33 A1.53,1.53 0 1,0 23.40,59.27 Z" />
+
+    <!-- 눈 -->
+    <path android:fillColor="#2E2126" android:pathData="M33.60,46.69 A2.21,2.21 0 1,0 33.60,51.11 A2.21,2.21 0 1,0 33.60,46.69 Z" />
+
+    <!-- 저금통 동전 구멍 -->
+    <path android:fillColor="#B84B72" android:pathData="M67.60,34.11 A7.65,2.04 0 1,0 67.60,38.19 A7.65,2.04 0 1,0 67.60,34.11 Z" />
+
+</vector>
