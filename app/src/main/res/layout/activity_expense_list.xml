@@ -99,27 +99,6 @@
 
                     </FrameLayout>
 
-                    <!-- 돼지 저금통 화면 아이콘 버튼 -->
-                    <FrameLayout
-                        android:id="@+id/btnOpenPiggyBank"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_circle_ghost"
-                        android:clickable="true"
-                        android:contentDescription="@string/piggy_bank_button"
-                        android:focusable="true">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:includeFontPadding="false"
-                            android:text="🐷"
-                            android:textSize="15sp" />
-
-                    </FrameLayout>
-
                     <!-- 설정 화면 아이콘 버튼 -->
                     <FrameLayout
                         android:id="@+id/btnOpenSettings"
@@ -179,16 +158,58 @@
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvHeroAmount"
+                <!-- 이번 달 지출 금액 옆에서 함께 지내는 작은 돼지 마스코트.
+                     톡 건드리면(=쓰다듬기/먹이 주기) 반응하고, 자주 만날수록 조금씩 자란다. -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:textColor="@color/text_main"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvHeroAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_main"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+
+                    <!-- 금액 글자 수와 상관없이 항상 같은 자리에 고정되도록, 오른쪽 끝에서
+                         일정 간격 떨어진 고정 위치에 둔다(화면 맨 구석까지 붙지는 않게). -->
+                    <ImageView
+                        android:id="@+id/ivPigMascot"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginEnd="56dp"
+                        android:background="@drawable/bg_circle_ghost"
+                        android:clickable="true"
+                        android:contentDescription="@string/pig_mascot_content_description"
+                        android:focusable="true"
+                        android:padding="3dp"
+                        android:src="@drawable/pig_mascot" />
+
+                </LinearLayout>
+
+                <!-- 돼지 마스코트를 톡 건드리거나 먹이를 줬을 때 잠깐 떠올랐다 사라지는 말풍선 반응.
+                     돼지가 고정된 자리에 있으므로, 실제 위치는 코드에서 그 자리 바로 위로 맞춘다. -->
+                <TextView
+                    android:id="@+id/tvPigReaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/bg_chip_category"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/tvMonthCompare"
@@ -380,6 +401,17 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- 동전/먹이가 떠올랐다가 돼지한테 드래그되는 화면 전체 레이어.
+         배경도 클릭 리스너도 없어서, 먹이가 없을 땐 터치가 그대로 아래 화면으로 전달된다. -->
+    <FrameLayout
+        android:id="@+id/foodLayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddExpense"

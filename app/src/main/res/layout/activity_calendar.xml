@@ -216,6 +216,16 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <!-- 이 달의 예산 대비 남은/초과 금액. 예산은 달마다 따로 설정되므로,
+             달을 넘길 때마다 그 달에 맞는 값으로 다시 계산해서 보여준다. -->
+        <TextView
+            android:id="@+id/tvCalendarBudgetStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
 </LinearLayout>

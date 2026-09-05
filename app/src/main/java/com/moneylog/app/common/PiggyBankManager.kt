@@ -32,11 +32,12 @@ object PiggyBankManager {
         val lastProcessed = runCatching { YearMonth.parse(lastProcessedStr) }.getOrNull() ?: current
         if (!lastProcessed.isBefore(current)) return
 
-        val budget = BudgetPrefs.getBudget(context)
         var newlySaved = 0L
         var cursor = lastProcessed.plusMonths(1)
         while (cursor.isBefore(current)) {
             val key = "%04d-%02d".format(cursor.year, cursor.monthValue)
+            // 달마다 예산이 다를 수 있으니, 지출뿐 아니라 예산도 그 달 것을 따로 가져온다.
+            val budget = BudgetPrefs.getBudget(context, key)
             val spent = ExpenseRepository.totalAmountForMonth(key)
             val diff = budget - spent
             if (diff > 0) newlySaved += diff

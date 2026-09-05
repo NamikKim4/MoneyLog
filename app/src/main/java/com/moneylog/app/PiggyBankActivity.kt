@@ -190,7 +190,7 @@ class PiggyBankActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val currentMonth = LocalDate.now().toString().substring(0, 7)
             val spent = withContext(Dispatchers.IO) { ExpenseRepository.totalAmountForMonth(currentMonth) }
-            val budget = BudgetPrefs.getBudget(this@PiggyBankActivity)
+            val budget = BudgetPrefs.getBudget(this@PiggyBankActivity, currentMonth)
             val diff = budget - spent
             if (diff > 0) {
                 tvThisMonthPreview.text = getString(R.string.piggy_preview_positive_format, diff)

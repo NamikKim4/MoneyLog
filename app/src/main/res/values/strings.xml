@@ -154,13 +154,54 @@
     <string name="piggy_goal_reached_title">🎉 부자 되세요! 🎉</string>
     <string name="piggy_goal_reached_subtitle">목표 금액을 가득 채웠어요!</string>
 
+    <!-- 메인 화면의 작은 돼지 마스코트: 탭할 때마다(=쓰다듬기/먹이 주기) 반응하고,
+         자주 만날수록 아기 -> 무럭무럭 -> 다 컸어요 순으로 조금씩 자란다. -->
+    <string name="pig_mascot_content_description">돼지 마스코트</string>
+    <string-array name="pig_reaction_baby">
+        <item>꿀꿀!</item>
+        <item>안녕, 나 아직 아기 돼지야</item>
+        <item>쓰다듬어줘서 고마워요</item>
+        <item>부자 되세요~ 🐷</item>
+        <item>오늘도 애써줘서 고마워요</item>
+    </string-array>
+    <string-array name="pig_reaction_growing">
+        <item>꿀꿀꿀~ 기분 좋아요!</item>
+        <item>나 점점 크고 있어요</item>
+        <item>매일 찾아와줘서 좋아요</item>
+        <item>부자 되세요~ 🐷</item>
+        <item>오늘 하루도 잘 견뎌냈어요, 잘하고 있어요</item>
+    </string-array>
+    <string-array name="pig_reaction_grown">
+        <item>꾸울꿀! 이제 다 컸어요!</item>
+        <item>주인님 최고예요!</item>
+        <item>오늘도 알뜰하게 잘 관리해봐요</item>
+        <item>부자 되세요~ 🐷</item>
+        <item>주인님 덕분에 하루하루가 행복해요</item>
+    </string-array>
+
+    <!-- 화면에 떠오른 동전/먹이를 드래그해서 돼지한테 줬을 때 보여주는 덕담 반응. -->
+    <string-array name="pig_reaction_fed">
+        <item>꿀꿀! 맛있게 먹었어요, 고마워요!</item>
+        <item>오늘도 알뜰하게, 내일은 더 부자 되세요!</item>
+        <item>덕분에 무럭무럭 자라는 것 같아요!</item>
+        <item>이 마음처럼 통장도 무럭무럭 자라길!</item>
+        <item>꾸울꿀~ 정성껏 챙겨줘서 행복해요</item>
+    </string-array>
+
     <!-- 설정 화면 -->
     <string name="settings_button">⚙️ 설정</string>
     <string name="settings_title">⚙️ 설정</string>
     <string name="settings_section_budget">예산</string>
     <string name="settings_budget_edit_row">이번 달 예산 수정</string>
+    <string name="settings_section_piggy_bank">저금통</string>
+    <string name="settings_piggy_bank_desc">이번 달 모은 돈이 저금통에 얼마나 찼는지 확인해요.</string>
     <string name="settings_section_notification">알림</string>
     <string name="settings_notification_toggle_label">예산 초과 알림 받기</string>
+    <string name="settings_notification_on_desc">켜져 있어요 · 예산을 넘으면 알려드려요</string>
+    <string name="settings_notification_off_desc">꺼져 있어요 · 예산을 넘어도 알림이 안 와요</string>
+    <string name="settings_notification_permission_off_desc">휴대폰 알림 권한이 꺼져 있어서 알림이 안 가요 · 눌러서 허용해주세요</string>
+    <string name="settings_notification_permission_denied_message">알림 권한을 허용해야 예산 초과 알림을 받을 수 있어요.</string>
+    <string name="settings_notification_open_settings_action">설정 열기</string>
     <string name="settings_section_data">데이터</string>
     <string name="settings_backup_row">데이터 백업 (내보내기)</string>
     <string name="settings_backup_desc">지출 내역을 CSV 파일로 내보내서 보관하거나 다른 곳으로 옮길 수 있어요.</string>

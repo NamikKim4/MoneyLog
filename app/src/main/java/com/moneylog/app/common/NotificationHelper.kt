@@ -33,7 +33,8 @@ object NotificationHelper {
 
     fun showBudgetAlert(context: Context, totalAmount: Long, budget: Long) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            // 기존 시스템 느낌표 아이콘 대신, 귀여운 돼지 얼굴 실루엣 아이콘을 쓴다.
+            .setSmallIcon(R.drawable.ic_notification_pig)
             .setContentTitle(context.getString(R.string.notification_budget_title))
             .setContentText(context.getString(R.string.notification_budget_message, totalAmount, budget))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

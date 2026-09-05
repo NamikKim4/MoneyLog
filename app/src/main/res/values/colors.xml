@@ -34,6 +34,12 @@
     <color name="ripple_primary">#33FF6F9C</color>
     <color name="ripple_on_primary">#40FFFFFF</color>
 
+    <!-- 설정 화면 알림 토글: 켜짐/꺼짐이 위치뿐 아니라 색으로도 뚜렷하게 구분되도록.
+         (이전엔 켜짐/꺼짐 둘 다 같은 색이라 지금 상태가 뭔지 헷갈렸던 문제 수정) -->
+    <color name="switch_track_on">#FFC2D8</color>
+    <color name="switch_track_off">#E4DEE1</color>
+    <color name="switch_thumb_off">#B3A4AC</color>
+
     <!-- 카테고리 원형 아이콘 배경 팔레트 (카테고리 이름 기준으로 자동 배정) -->
     <color name="cat_bg_1">#FFE8D6</color>
     <color name="cat_bg_2">#DCEEFF</color>

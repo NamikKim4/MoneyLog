@@ -10,6 +10,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -20,6 +22,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.ProgressBar
@@ -39,12 +42,14 @@ import com.moneylog.app.common.CategoryStyle
 import com.moneylog.app.common.FunAnimations
 import com.moneylog.app.common.NotificationHelper
 import com.moneylog.app.common.NotificationPrefs
+import com.moneylog.app.common.PiggyPetPrefs
 import com.moneylog.app.common.TouchPopEffect
 import com.moneylog.app.data.CategoryTotal
 import com.moneylog.app.data.ExpenseRepository
 import com.moneylog.app.model.Expense
 import com.moneylog.app.ui.ExpenseListItem
 import com.moneylog.app.ui.GroupedExpenseAdapter
+import com.moneylog.app.ui.PigFoodSpawner
 import com.moneylog.app.ui.SwipeToDeleteHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,6 +74,10 @@ class ExpenseListActivity : AppCompatActivity() {
         private const val SWIPE_MIN_DISTANCE = 100
         private const val SWIPE_MIN_VELOCITY = 100
 
+        /** 돼지 먹이(동전/음식)가 화면에 뜨는 주기. 화면을 열고 잠깐 뒤 처음 뜨고, 그 다음부턴 이 간격마다 뜬다. */
+        private const val FOOD_SPAWN_INITIAL_DELAY_MS = 3000L
+        private const val FOOD_SPAWN_INTERVAL_MS = 25000L
+
         /** 통계 화면 등 다른 화면에서 "이 달, 이 카테고리만" 보여주며 열 때 쓰는 extra들. */
         const val EXTRA_YEAR_MONTH = "EXTRA_YEAR_MONTH"
         const val EXTRA_CATEGORY_FILTER = "EXTRA_CATEGORY_FILTER"
@@ -83,6 +92,9 @@ class ExpenseListActivity : AppCompatActivity() {
 
     private lateinit var tvHeroLabel: TextView
     private lateinit var tvHeroAmount: TextView
+    private lateinit var ivPigMascot: ImageView
+    private lateinit var tvPigReaction: TextView
+    private lateinit var foodLayer: FrameLayout
     private lateinit var tvMonthCompare: TextView
     private lateinit var budgetSection: LinearLayout
     private lateinit var tvBudgetValue: TextView
@@ -95,7 +107,6 @@ class ExpenseListActivity : AppCompatActivity() {
     private lateinit var fabAddExpense: FloatingActionButton
     private lateinit var btnOpenCalendar: FrameLayout
     private lateinit var btnOpenStatistics: FrameLayout
-    private lateinit var btnOpenPiggyBank: FrameLayout
     private lateinit var btnOpenSettings: FrameLayout
     private lateinit var monthSelectorContainer: LinearLayout
     private lateinit var tvMonthSelector: TextView
@@ -104,6 +115,9 @@ class ExpenseListActivity : AppCompatActivity() {
 
     /** 좌우로 스와이프하면 이전/다음 달로 이동한다. */
     private lateinit var monthSwipeDetector: GestureDetector
+
+    /** 돼지 먹이를 드래그하는 동안에는 true — 이 좌우 움직임이 "달 넘기기" 스와이프로 오해되지 않게 막는다. */
+    private var isDraggingPigFood: Boolean = false
 
     /** 지출 목록 화면에서 현재 골라서 보고 있는 달("yyyy-MM"). 기본값은 실제 이번 달. */
     private var selectedYearMonth: String = actualCurrentYearMonth()
@@ -121,6 +135,27 @@ class ExpenseListActivity : AppCompatActivity() {
     /** 히어로 숫자가 매번 뚝 바뀌지 않고 스르륵 세어 올라가도록 이전 값을 기억해둔다. */
     private var displayedHeroTotal: Long = 0L
     private var heroAnimator: ValueAnimator? = null
+
+    /** 돼지 먹이(동전/음식)를 주기적으로 화면에 띄우는 타이머. 화면이 보일 때만 돌고, 가려지면 멈춘다. */
+    private val foodSpawnHandler = Handler(Looper.getMainLooper())
+    private val foodSpawnRunnable = object : Runnable {
+        override fun run() {
+            PigFoodSpawner.spawn(
+                context = this@ExpenseListActivity,
+                container = foodLayer,
+                target = ivPigMascot,
+                onDragStart = { isDraggingPigFood = true },
+                onDragEnd = { isDraggingPigFood = false }
+            ) {
+                val count = PiggyPetPrefs.recordInteraction(this@ExpenseListActivity)
+                PiggyPetPrefs.recordFeeding(this@ExpenseListActivity)
+                applyPigMascotStage(count)
+                FunAnimations.bounce(ivPigMascot)
+                showPigReaction(count, fed = true)
+            }
+            foodSpawnHandler.postDelayed(this, FOOD_SPAWN_INTERVAL_MS)
+        }
+    }
 
     private val groupedAdapter = GroupedExpenseAdapter(onItemClick = { expense -> openEditExpense(expense) })
 
@@ -174,6 +209,9 @@ class ExpenseListActivity : AppCompatActivity() {
 
         tvHeroLabel = findViewById(R.id.tvHeroLabel)
         tvHeroAmount = findViewById(R.id.tvHeroAmount)
+        ivPigMascot = findViewById(R.id.ivPigMascot)
+        tvPigReaction = findViewById(R.id.tvPigReaction)
+        foodLayer = findViewById(R.id.foodLayer)
         tvMonthCompare = findViewById(R.id.tvMonthCompare)
         budgetSection = findViewById(R.id.budgetSection)
         tvBudgetValue = findViewById(R.id.tvBudgetValue)
@@ -186,7 +224,6 @@ class ExpenseListActivity : AppCompatActivity() {
         fabAddExpense = findViewById(R.id.fabAddExpense)
         btnOpenCalendar = findViewById(R.id.btnOpenCalendar)
         btnOpenStatistics = findViewById(R.id.btnOpenStatistics)
-        btnOpenPiggyBank = findViewById(R.id.btnOpenPiggyBank)
         btnOpenSettings = findViewById(R.id.btnOpenSettings)
         monthSelectorContainer = findViewById(R.id.monthSelectorContainer)
         tvMonthSelector = findViewById(R.id.tvMonthSelector)
@@ -223,9 +260,14 @@ class ExpenseListActivity : AppCompatActivity() {
             startActivity(Intent(this, StatisticsActivity::class.java))
         }
 
-        btnOpenPiggyBank.setOnClickListener {
-            TouchPopEffect.pop(it)
-            startActivity(Intent(this, PiggyBankActivity::class.java))
+        // 아이콘 목 옆의 작은 돼지 마스코트: 톡 건드릴 때마다(=쓰다듬기/먹이 주기) 반응하고,
+        // 자주 만날수록 조금씩 자란다. 저금통 화면 자체는 설정 안으로 옮겼다.
+        applyPigMascotStage(PiggyPetPrefs.getInteractionCount(this))
+        ivPigMascot.setOnClickListener {
+            val count = PiggyPetPrefs.recordInteraction(this)
+            applyPigMascotStage(count)
+            FunAnimations.bounce(ivPigMascot)
+            showPigReaction(count)
         }
 
         btnOpenSettings.setOnClickListener {
@@ -298,7 +340,10 @@ class ExpenseListActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        monthSwipeDetector.onTouchEvent(ev)
+        // 돼지 먹이를 드래그하는 중에는 그 좌우 움직임을 "달 넘기기" 스와이프로 착각하지 않도록 건너뛴다.
+        if (!isDraggingPigFood) {
+            monthSwipeDetector.onTouchEvent(ev)
+        }
         return super.dispatchTouchEvent(ev)
     }
 
@@ -314,6 +359,14 @@ class ExpenseListActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refreshList()
+        // 화면이 보이는 동안에만 돼지 먹이를 주기적으로 띄운다.
+        foodSpawnHandler.removeCallbacks(foodSpawnRunnable)
+        foodSpawnHandler.postDelayed(foodSpawnRunnable, FOOD_SPAWN_INITIAL_DELAY_MS)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        foodSpawnHandler.removeCallbacks(foodSpawnRunnable)
     }
 
     /** 검색/삭제/화면 복귀 등으로 목록만 다시 그릴 때 호출한다. 카테고리 필터는 그대로 유지된다. */
@@ -412,6 +465,68 @@ class ExpenseListActivity : AppCompatActivity() {
         displayedHeroTotal = target
     }
 
+    /**
+     * 상호작용 횟수(=영구적인 성장 단계)에, 오늘 먹이를 준 만큼(=하루 동안만 유지되는 임시 보너스,
+     * 자정이 지나면 저절로 사라진다)을 더해서 돼지 마스코트 크기에 반영한다.
+     */
+    private fun applyPigMascotStage(interactionCount: Int) {
+        val baseSizeDp = when (PiggyPetPrefs.stageFor(interactionCount)) {
+            PiggyPetPrefs.STAGE_GROWN -> 45
+            PiggyPetPrefs.STAGE_GROWING -> 39
+            else -> 34
+        }
+        val sizeDp = baseSizeDp + PiggyPetPrefs.todaysFeedGrowthDp(this)
+        val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
+        ivPigMascot.layoutParams = ivPigMascot.layoutParams.apply {
+            width = sizePx
+            height = sizePx
+        }
+        ivPigMascot.requestLayout()
+    }
+
+    /**
+     * 돼지 마스코트를 톡 건드리거나([fed]=false) 먹이를 줬을 때([fed]=true), 말풍선으로
+     * 반응 문구를 잠깐 보여준다. 돼지는 금액 길이에 따라 좌우로 위치가 달라지므로, 말풍선도
+     * 매번 돼지 바로 위로 오도록 위치를 다시 계산한다.
+     */
+    private fun showPigReaction(interactionCount: Int, fed: Boolean = false) {
+        val pool = if (fed) {
+            resources.getStringArray(R.array.pig_reaction_fed)
+        } else {
+            when (PiggyPetPrefs.stageFor(interactionCount)) {
+                PiggyPetPrefs.STAGE_GROWN -> resources.getStringArray(R.array.pig_reaction_grown)
+                PiggyPetPrefs.STAGE_GROWING -> resources.getStringArray(R.array.pig_reaction_growing)
+                else -> resources.getStringArray(R.array.pig_reaction_baby)
+            }
+        }
+        tvPigReaction.text = pool.random()
+
+        tvPigReaction.animate().cancel()
+        tvPigReaction.visibility = View.VISIBLE
+        tvPigReaction.alpha = 0f
+        tvPigReaction.translationY = 8f
+
+        tvPigReaction.post {
+            val targetCenterX = ivPigMascot.x + ivPigMascot.width / 2f
+            tvPigReaction.translationX = (targetCenterX - tvPigReaction.width / 2f) - tvPigReaction.left
+        }
+
+        tvPigReaction.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(200L)
+            .withEndAction {
+                tvPigReaction.animate()
+                    .alpha(0f)
+                    .translationY(-8f)
+                    .setStartDelay(1100L)
+                    .setDuration(260L)
+                    .withEndAction { tvPigReaction.visibility = View.INVISIBLE }
+                    .start()
+            }
+            .start()
+    }
+
     /** 왼쪽으로 스와이프해서 지운 지출을 즉시 화면/서버에서 지우고, 실행취소 스낵바를 보여준다. */
     private fun deleteWithUndo(expense: Expense) {
         currentMonthExpenses = currentMonthExpenses.filterNot { it.id == expense.id }
@@ -452,7 +567,8 @@ class ExpenseListActivity : AppCompatActivity() {
 
     /** 예산 대비 사용량을 진행바 + 텍스트로 보여준다. 예산 영역을 탭하면 예산을 바꿀 수 있다. */
     private fun renderBudgetStatus(monthTotal: Long) {
-        val budget = BudgetPrefs.getBudget(this)
+        // 지금 화면에 보이는 달의 예산만 가져온다 — 달마다 예산이 따로 저장되므로, 다른 달을 봐도 섞이지 않는다.
+        val budget = BudgetPrefs.getBudget(this, selectedYearMonth)
         tvBudgetValue.text = getString(R.string.budget_progress_format, monthTotal, budget)
 
         val percent = if (budget > 0) ((monthTotal * 100) / budget).toInt() else 0
@@ -475,11 +591,11 @@ class ExpenseListActivity : AppCompatActivity() {
         }
     }
 
-    /** 이번 달 예산 금액을 직접 입력해서 바꾸는 간단한 다이얼로그. */
+    /** 지금 보고 있는 달의 예산 금액을 직접 입력해서 바꾸는 간단한 다이얼로그. 다른 달 예산에는 영향이 없다. */
     private fun showBudgetEditDialog() {
         val input = EditText(this).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
-            val current = BudgetPrefs.getBudget(this@ExpenseListActivity).toString()
+            val current = BudgetPrefs.getBudget(this@ExpenseListActivity, selectedYearMonth).toString()
             setText(current)
             setSelection(current.length)
             setPadding(dp(20), dp(16), dp(20), dp(16))
@@ -491,7 +607,7 @@ class ExpenseListActivity : AppCompatActivity() {
             .setPositiveButton(R.string.budget_save_button) { _, _ ->
                 val amount = input.text.toString().toLongOrNull()
                 if (amount != null && amount > 0) {
-                    BudgetPrefs.setBudget(this, amount)
+                    BudgetPrefs.setBudget(this, selectedYearMonth, amount)
                     recomputeAndRenderFromCurrentList()
                     FunAnimations.jingle(tvBudgetValue)
                 }
@@ -607,10 +723,11 @@ class ExpenseListActivity : AppCompatActivity() {
 
     private fun checkBudget() {
         lifecycleScope.launch {
+            val realCurrentYearMonth = actualCurrentYearMonth()
             val monthTotal = withContext(Dispatchers.IO) {
-                ExpenseRepository.totalAmountForMonth(actualCurrentYearMonth())
+                ExpenseRepository.totalAmountForMonth(realCurrentYearMonth)
             }
-            val budget = BudgetPrefs.getBudget(this@ExpenseListActivity)
+            val budget = BudgetPrefs.getBudget(this@ExpenseListActivity, realCurrentYearMonth)
 
             if (monthTotal > budget && NotificationPrefs.isEnabled(this@ExpenseListActivity)) {
                 NotificationHelper.showBudgetAlert(this@ExpenseListActivity, monthTotal, budget)

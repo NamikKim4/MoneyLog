@@ -75,6 +75,54 @@
 
         </LinearLayout>
 
+        <!-- 저금통 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/settings_section_piggy_bank"
+            android:textColor="@color/text_sub"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card_soft"
+            android:elevation="2dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/rowPiggyBank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_list_item_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/piggy_bank_button"
+                    android:textColor="@color/text_main"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/settings_piggy_bank_desc"
+                    android:textColor="@color/text_sub"
+                    android:textSize="11.5sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
         <!-- 알림 -->
         <TextView
             android:layout_width="match_parent"
@@ -105,20 +153,38 @@
                 android:orientation="horizontal"
                 android:padding="12dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/settings_notification_toggle_label"
-                    android:textColor="@color/text_main"
-                    android:textSize="14sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_notification_toggle_label"
+                        android:textColor="@color/text_main"
+                        android:textSize="14sp" />
+
+                    <!-- 스위치 색이나 위치만으로는 지금 켜진 건지 꺼진 건지 헷갈릴 수 있어서,
+                         글자로도 현재 상태를 확실하게 보여준다. -->
+                    <TextView
+                        android:id="@+id/tvNotificationStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/text_sub"
+                        android:textSize="11.5sp" />
+
+                </LinearLayout>
 
                 <Switch
                     android:id="@+id/swNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:thumbTint="@color/primary"
-                    android:trackTint="@color/border" />
+                    android:layout_marginStart="10dp"
+                    android:thumbTint="@color/switch_thumb_selector"
+                    android:trackTint="@color/switch_track_selector" />
 
             </LinearLayout>
 

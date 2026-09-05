@@ -13,10 +13,12 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.moneylog.app.common.BudgetPrefs
 import com.moneylog.app.common.FunAnimations
 import com.moneylog.app.common.TouchPopEffect
 import com.moneylog.app.data.ExpenseRepository
@@ -53,6 +55,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var tvSelectedDayEmpty: TextView
     private lateinit var rvSelectedDayExpenses: RecyclerView
     private lateinit var tvMonthTotal: TextView
+    private lateinit var tvCalendarBudgetStatus: TextView
     private lateinit var btnAddForDay: FrameLayout
 
     private val dayExpenseAdapter = ExpenseAdapter(emptyList(), onItemClick = { expense -> openEditExpense(expense) })
@@ -120,6 +123,7 @@ class CalendarActivity : AppCompatActivity() {
         tvSelectedDayEmpty = findViewById(R.id.tvSelectedDayEmpty)
         rvSelectedDayExpenses = findViewById(R.id.rvSelectedDayExpenses)
         tvMonthTotal = findViewById(R.id.tvMonthTotal)
+        tvCalendarBudgetStatus = findViewById(R.id.tvCalendarBudgetStatus)
         btnAddForDay = findViewById(R.id.btnAddForDay)
 
         rvSelectedDayExpenses.layoutManager = LinearLayoutManager(this)
@@ -240,9 +244,24 @@ class CalendarActivity : AppCompatActivity() {
             }
             tvMonthTotal.text = getString(R.string.total_amount_format, monthTotal)
             if (monthTotal > 0) FunAnimations.jingle(tvMonthTotal)
+            renderBudgetStatus(monthTotal, yearMonthStr)
 
             renderCalendarGrid()
             loadSelectedDayExpenses()
+        }
+    }
+
+    /** 지금 보고 있는 달의 예산과 비교해서, 남은 금액 또는 초과한 금액을 보여준다.
+     *  예산은 달마다 따로 저장되므로, 달을 넘길 때마다 그 달에 맞는 값을 다시 가져와서 계산한다. */
+    private fun renderBudgetStatus(monthTotal: Long, yearMonth: String) {
+        val budget = BudgetPrefs.getBudget(this, yearMonth)
+        val remaining = budget - monthTotal
+        if (remaining >= 0) {
+            tvCalendarBudgetStatus.text = getString(R.string.budget_remaining_format, remaining)
+            tvCalendarBudgetStatus.setTextColor(ContextCompat.getColor(this, R.color.safe))
+        } else {
+            tvCalendarBudgetStatus.text = getString(R.string.budget_over_format, -remaining)
+            tvCalendarBudgetStatus.setTextColor(ContextCompat.getColor(this, R.color.danger))
         }
     }
 
@@ -404,17 +423,23 @@ class CalendarActivity : AppCompatActivity() {
         }
 
         val previousMonthTotalText = tvMonthTotal.text
+        val previousBudgetStatusText = tvCalendarBudgetStatus.text
+        val previousBudgetStatusColor = tvCalendarBudgetStatus.currentTextColor
         lifecycleScope.launch {
             withContext(Dispatchers.IO) { ExpenseRepository.delete(expense) }
+            val yearMonthStr = currentYearMonthString()
             val monthTotal = withContext(Dispatchers.IO) {
-                ExpenseRepository.totalAmountForMonth(currentYearMonthString())
+                ExpenseRepository.totalAmountForMonth(yearMonthStr)
             }
             tvMonthTotal.text = getString(R.string.total_amount_format, monthTotal)
+            renderBudgetStatus(monthTotal, yearMonthStr)
         }
 
         Snackbar.make(rvSelectedDayExpenses, getString(R.string.expense_deleted_message), Snackbar.LENGTH_LONG)
             .setAction(R.string.undo_button) {
                 tvMonthTotal.text = previousMonthTotalText
+                tvCalendarBudgetStatus.text = previousBudgetStatusText
+                tvCalendarBudgetStatus.setTextColor(previousBudgetStatusColor)
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) { ExpenseRepository.add(expense) }
                     loadMonth()
