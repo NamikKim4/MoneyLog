@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 알림 토글의 트랙(배경) 색. 켜짐일 땐 진한 핑크, 꺼짐일 땐 채도 낮은 회색으로
+     확실히 구분되게 한다. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/switch_track_on" android:state_checked="true" />
+    <item android:color="@color/switch_track_off" android:state_checked="false" />
+</selector>

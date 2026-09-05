@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 알림 토글의 동그란 손잡이(thumb) 색. 켜짐/꺼짐에 따라 색이 달라져서
+     위치를 굳이 확인하지 않아도 한눈에 상태를 알 수 있게 한다. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/primary" android:state_checked="true" />
+    <item android:color="@color/switch_thumb_off" android:state_checked="false" />
+</selector>

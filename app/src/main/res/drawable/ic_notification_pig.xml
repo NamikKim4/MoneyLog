@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 예산 초과 알림의 상태 표시줄 아이콘. 기존 느낌표 아이콘 대신, 둥근 얼굴 + 귀 2개 + 코(콧구멍 2개)로
+     이뤄진 귀여운 돼지 얼굴 실루엣. 상태 표시줄 아이콘은 시스템이 알파 채널만 보고 단색으로
+     칠하기 때문에, 실제 색은 흰색으로 두고 모양(알파)만 신경 쓴다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="
+            M5,8 L8,3 L10,8 Z
+            M19,8 L16,3 L14,8 Z
+            M4,13 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0 Z
+            M8,16 a4,2.6 0 1,0 8,0 a4,2.6 0 1,0 -8,0 Z
+            M9.5,16 a0.8,0.8 0 1,0 1.6,0 a0.8,0.8 0 1,0 -1.6,0 Z
+            M12.9,16 a0.8,0.8 0 1,0 1.6,0 a0.8,0.8 0 1,0 -1.6,0 Z" />
+
+</vector>
